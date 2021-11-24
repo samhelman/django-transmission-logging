@@ -1,0 +1,9 @@
+<div class="form">
+    <form action="" method="GET">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <p>
+            <input type="submit" value="Filter">
+        </p>
+    </form>
+</div>

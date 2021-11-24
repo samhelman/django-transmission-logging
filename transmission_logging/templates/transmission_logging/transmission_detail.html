@@ -1,0 +1,27 @@
+{% extends "transmission_logging/transmission_base.html" %}
+{% block content %}
+
+    <div>
+        <h1>{{ transmission }}</h1>
+    </div>
+    <div class="flex-grid-wrapper">
+        <div class="flex-grid">
+            {% for key, value in transmission.data.items %}
+                {% if value != None %}
+                    <div class="card">
+                        <div>
+                            <h4>{{ key|upper }}</h4>
+                        </div>
+                        <div>
+                            <p>
+                                {{ value }}
+                            </p>
+                        </div>
+                    </div>
+                {% endif %}
+            {% endfor %}
+        </div>
+    </div>
+
+{% endblock %}
+            

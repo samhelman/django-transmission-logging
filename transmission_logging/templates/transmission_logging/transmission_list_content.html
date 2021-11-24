@@ -1,0 +1,50 @@
+{% extends "transmission_logging/paginator.html" %}
+{% block paginator_content %}
+    <div class="table">
+        <div class="table-header">
+            <div class="table-row">
+                <div>Transmission Exceptions</div>
+            </div>
+            <div class="table-row">
+                <div>
+                    Method
+                </div>
+                <div>
+                    Endpoint
+                </div>
+                <div>
+                    User
+                </div>
+                <div>
+                    Is Error
+                </div>
+                <div>
+                    Transmission Time
+                </div>
+            </div>
+        </div>
+        <div class="table-body">
+            {% for transmission in transmissions %}
+                <a href="{% url 'transmission_logging:transmission_detail' pk=transmission.pk %}">
+                    <div class="table-row">
+                        <div>
+                            {{ transmission.request_type }}
+                        </div>
+                        <div>
+                            {{ transmission.endpoint }}
+                        </div>
+                        <div>
+                            {{ transmission.user }}
+                        </div>
+                        <div>
+                            {{ transmission.is_error }}
+                        </div>
+                        <div>
+                            {{ transmission.created_datetime }}
+                        </div>
+                    </div>
+                </a> 
+            {% endfor %}
+        </div>
+    </div>
+{% endblock paginator_content %}

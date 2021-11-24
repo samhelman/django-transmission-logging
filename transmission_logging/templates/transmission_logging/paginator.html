@@ -1,0 +1,35 @@
+{% load django_transmission_logging_tags %}
+
+<div class="pagination">
+    <div class="showing">
+        Showing {{ page_obj.start_index }}-{{ page_obj.end_index}} of {{ page_obj.paginator.count }}
+    </div>
+    <div>
+        {% block paginator_content %}{% endblock %}
+    </div>
+    <div class="step-links-wrapper">
+        <div class="step-links max-500">
+            <div class="previous">
+                {% if page_obj.has_previous %}
+                    {% if page_obj.previous_page_number != 1 %}
+                        <a href="?{% url_replace request 'page' 1 %}">First</a>
+                    {% endif %}
+                    <a href="?{% url_replace request 'page' page_obj.previous_page_number %}">Previous</a>
+                {% endif %}
+            </div>
+        
+            <div class="current">
+                Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}
+            </div>
+        
+            <div class="next">
+                {% if page_obj.has_next %}
+                    <a href="?{% url_replace request 'page' page_obj.next_page_number %}">Next</a>
+                    {% if page_obj.next_page_number != page_obj.paginator.num_pages %}
+                        <a href="?{% url_replace request 'page' page_obj.paginator.num_pages %}">Last</a>
+                    {% endif %}
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
