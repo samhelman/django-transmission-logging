@@ -1,41 +1,44 @@
 from django import forms
 from django.contrib.auth import get_user_model
+from django.db import models
 
 from transmission_logging.models import TransmissionLog
 
 class TransmissionListFilterForm(forms.Form):
-    endpoint = forms.ChoiceField(choices=(), required=False)
-    user = forms.ChoiceField(choices=(), required=False)
-    is_error = forms.ChoiceField(choices=(), required=False)
 
     def __init__(self, *args, **kwargs):
+        self.model = kwargs.pop("model")
         super().__init__(*args, **kwargs)
-        self._build_choices()
+        self._build_fields()
     
-    def _build_choices(self):
-        for field_name, field in self.fields.items():
-            try:
-                choices_func = getattr(self, f"get_{field_name}_choices")
-                choices = choices_func()
-            except AttributeError:
-                choices = []
-            field.choices = choices
+    def _build_fields(self):
+        """
+            For each field in the list of list_filters, add a choice field to the form.
+        """
+        for field_name in self.model.list_filters:
+            self.fields[field_name] = forms.ChoiceField(
+                choices=self._get_choices(field_name), 
+                required=False,
+            )
 
-    def get_endpoint_choices(self):
-        return [(None, "")] + [
-            (value, value)
-            for value in list(dict.fromkeys(TransmissionLog.objects.values_list("endpoint", flat=True)))
-        ]
+    def _get_choices(self, field_name):
+        """
+            Returns a list of distinct available choices from the model queryset field values.
+        """
+        values_list = self.model.objects.values_list(field_name, flat=True)
+        field = self.model._meta.get_field(field_name)
 
-    def get_user_choices(self):
-        return [(None, ""), ("None", "None")] + [
-            (value.pk, value.username)
-            for value in get_user_model().objects.filter(transmissionlog__isnull=False).distinct()
-        ]
+        # If the field is a ForeignKey field, get the value of the fk instead of the pk.
+        if isinstance(field, models.ForeignKey):
+            choices = [(None, "")]
+            for value in list(dict.fromkeys(values_list)):
+                try:
+                    choices.append((value, field.related_model.objects.get(id=value)))
+                except field.related_model.DoesNotExist:
+                    choices.append((str(value), str(value)))
+        else:
+            choices = [(None, "")] + [
+                (str(value), str(value)) for value in list(dict.fromkeys(values_list))
+            ]
 
-    def get_is_error_choices(self):
-        return [
-            (None, ""),
-            (True, True),
-            (False, False),
-        ]
+        return list(dict.fromkeys(choices))

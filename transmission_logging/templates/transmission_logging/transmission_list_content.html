@@ -1,47 +1,40 @@
 {% extends "transmission_logging/paginator.html" %}
+
+{% load django_transmission_logging_tags %}
+
 {% block paginator_content %}
     <div class="table">
         <div class="table-header">
             <div class="table-row">
-                <div>Transmission Exceptions</div>
+                <div>{{ contenttype|upper }}</div>
             </div>
             <div class="table-row">
-                <div>
-                    Method
-                </div>
-                <div>
-                    Endpoint
-                </div>
-                <div>
-                    User
-                </div>
-                <div>
-                    Is Error
-                </div>
-                <div>
-                    Transmission Time
-                </div>
+                {% if model.list_display %}
+                    {% for el in model.list_display%}
+                        <div>
+                            {{ el }}
+                        </div>
+                    {% endfor %}
+                {% else %}
+                    <div></div>
+                {% endif %}
             </div>
         </div>
         <div class="table-body">
             {% for transmission in transmissions %}
-                <a href="{% url 'transmission_logging:transmission_detail' pk=transmission.pk %}">
+                <a href="{% url 'transmission_logging:transmission_detail' contenttype=contenttype pk=transmission.pk %}">
                     <div class="table-row">
-                        <div>
-                            {{ transmission.request_type }}
-                        </div>
-                        <div>
-                            {{ transmission.endpoint }}
-                        </div>
-                        <div>
-                            {{ transmission.user }}
-                        </div>
-                        <div>
-                            {{ transmission.is_error }}
-                        </div>
-                        <div>
-                            {{ transmission.created_datetime }}
-                        </div>
+                        {% if model.list_display %}
+                            {% for el in model.list_display%}
+                                <div>
+                                    {{ transmission|getvalue:el }}
+                                </div>
+                            {% endfor %}
+                        {% else %}
+                            <div>
+                                {{ transmission }}
+                            </div>
+                        {% endif %}
                     </div>
                 </a> 
             {% endfor %}

@@ -1,6 +1,6 @@
 from transmission_logging.models import (
-    TransmissionLog,
+    RequestLog,
 )
 
 def register(action):
-    TransmissionLog.actions.append(action)
+    RequestLog.actions.append(action)

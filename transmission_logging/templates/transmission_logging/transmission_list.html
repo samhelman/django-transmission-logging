@@ -1,7 +1,10 @@
 {% extends "transmission_logging/transmission_base.html" %}
+{% load django_transmission_logging_tags %}
 {% block content %}
 
-    {% include "transmission_logging/transmission_list_filters.html" %}
+    {% if model|getvalue:"list_filters" %}
+        {% include "transmission_logging/transmission_list_filters.html" %}
+    {% endif %}
     {% include "transmission_logging/transmission_list_content.html" %}
 
 {% endblock %}

@@ -3,7 +3,7 @@
 Django Transmission Logging is a simple Django app to standardise the
 logging of request data.
 
-## Quick start
+## Quick Start
 
 1. Add "transmission_logging" to your INSTALLED_APPS setting like this::
 
@@ -40,7 +40,7 @@ logging of request data.
 
     ```python
     from transmission_logging.mixins import TransmissionLogMixin
-    
+
     class MyView(TransmissionLogMixin, APIView):
         ...
     ```
@@ -92,10 +92,69 @@ logging of request data.
 You can register additional actions in order to perform custom actions when the TransactionMiddleware is triggered. The custom_action function that you register must accept a single argument - the instance of the TransactionLog that is created by the middleware.
 
 ```python
-from transmission_logging import actions
+from transmission_logging import middleware
 
 def custom_action(instance):
     print("This is a custom action.")
 
-actions.register(custom_post_save_action)
+middleware.actions.register(custom_action)
+```
+
+## Transmission Dashboard
+
+### Model Registration
+
+By default, the transmission dashboard will display the records for RequestLog and ResponseLog models.
+
+You can register custom models with the transmission dashboard in a similar way to how the django admin works.
+
+```python
+from transmission_logging import transmission_dashboard
+
+transmission_dashboard.register(CustomModel)
+```
+
+### Dashboard List View
+
+By default, the dashboard list view will display a paginated list of all rows in the registered model table, with no filters.
+
+There are some customisable options for the list view. You can change the list display values in a similar way to the django admin by adding list or tuple of strings to the registered model's list_display attribute.
+
+```python
+class RequestLog(TransmissionLog):
+    ....
+    list_filters = (
+        "endpoint",
+        "user",
+    )
+    list_display = (
+        "endpoint",
+        "user",
+    )
+```
+
+### Dashboard Detail View
+
+In order to display details on the transmission dashboard detail page, you should add a data property to the model that returns a dictionary of field names and values. For example, the RequestLog model:
+
+```python
+class RequestLog(TransmissionLog):
+    ....
+    @property
+    def data(self):
+        """
+            Returns the serialized data for this instance.
+        """
+        # late import to handle circular import error
+        from transmission_logging.serializers import RequestLogSerializer
+        return RequestLogSerializer(self).data
+
+class RequestLogSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = RequestLog
+        exclude = (
+            "id",
+        )
+
+    user = serializers.CharField(source="user.username", allow_null=True, read_only=True)
 ```

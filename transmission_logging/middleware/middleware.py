@@ -6,7 +6,7 @@ import traceback
 
 from transmission_logging import tools as logging_tools
 from transmission_logging.models import (
-    TransmissionLog,
+    RequestLog,
 )
 
 class TransmissionMiddleware(MiddlewareMixin):
@@ -35,25 +35,24 @@ class TransmissionMiddleware(MiddlewareMixin):
             return False
         return True
     
-    def _log_transmission(self, request):
+    def _log_request(self, request):
         """
-            Creates the TransmissionLog object. Returns an instance of TransmissionLog
+            Creates the RequestLog object. Returns an instance of RequestLog.
         """
-        return TransmissionLog.objects.create(
+        return RequestLog.objects.create(
             user=request.user if request.user.is_authenticated else None,
             endpoint=request.path,
             full_path=request.get_full_path(),
-            request_header=logging_tools.get_headers(request),
-            request_content=logging_tools.get_request_content(request),
-            request_type=request.method,
-            traceback=traceback.format_exc(),
+            header=logging_tools.get_headers(request),
+            content=logging_tools.get_request_content(request),
+            method=request.method,
         )
 
     def _perform_additional_actions(self, instance):
         """
             For each registered action, call the action function.
         """
-        for action in TransmissionLog.actions:
+        for action in RequestLog.actions:
             action(instance)
 
     def process_view(self, request, view_func, view_args, view_kwargs):
@@ -63,5 +62,5 @@ class TransmissionMiddleware(MiddlewareMixin):
         if not self._do_log(request, view_func, view_args, view_kwargs):
             return
 
-        instance = self._log_transmission(request)
+        instance = self._log_request(request)
         self._perform_additional_actions(instance)

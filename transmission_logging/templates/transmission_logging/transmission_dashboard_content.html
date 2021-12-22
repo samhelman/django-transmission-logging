@@ -1,0 +1,12 @@
+<div class="flex-grid-wrapper">
+    <div class="flex-grid">
+        {% for model_name, model in models.items %}
+            <a class="card dashboard-square" href="{% url 'transmission_logging:transmission_list' contenttype=model_name %}">
+                <div class="">
+                    <h4>{{ model_name|upper }}</h4>
+                    <h1>{{ model.count }}</h1>
+                </div>
+            </a>
+        {% endfor %}
+    </div>
+</div>

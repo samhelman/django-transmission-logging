@@ -1,7 +1,9 @@
 from django.contrib import admin
 
 from transmission_logging.models import (
-    TransmissionLog,
+    RequestLog,
+    ResponseLog,
 )
 
-admin.site.register(TransmissionLog)
+admin.site.register(RequestLog)
+admin.site.register(ResponseLog)

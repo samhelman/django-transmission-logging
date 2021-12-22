@@ -180,3 +180,18 @@ form p {
     display: flex;
     flex-direction: column;
 }
+
+.dashboard-square {
+    width: 250px;
+    height: 250px;
+    position: relative;
+    flex-grow: unset;
+}
+
+.dashboard-square h1 {
+    font-size: 100px;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
