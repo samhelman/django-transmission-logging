@@ -134,7 +134,11 @@ transmission_dashboard.register(CustomModel)
 
 By default, the dashboard list view will display a paginated list of all rows in the registered model table, with no filters.
 
-There are some customisable options for the list view. You can change the list display values in a similar way to the django admin by adding list or tuple of strings to the registered model's list_display attribute.
+There are some customisable options for the list view. 
+
+You can change the list display values in a similar way to the django admin by adding list or tuple of strings to the registered model's list_display attribute.
+
+You can also add a dropdown filter form to the list view by adding the list_filters attribute in a similar way to the list_display attribute. The fields in the list_filters do not necessarily have to be in the list_display.
 
 ```python
 class RequestLog(TransmissionLog):
