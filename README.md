@@ -5,7 +5,7 @@ logging of request data.
 
 ## Quick Start
 
-1. Add "transmission_logging" to your INSTALLED_APPS setting like this::
+1. Add "transmission_logging" to your INSTALLED_APPS setting like this:
 
     ```python
     INSTALLED_APPS = [
@@ -14,7 +14,18 @@ logging of request data.
     ]
     ```
 
-2. Include the transmission_logging URLconf in your project urls.py like this:
+2. Add the template tags to the TEMPLATES setting:
+    ```python
+    TEMPLATES = {
+        ...,
+        'libraries': {
+            ...,
+            'django_transmission_logging_tags': 'transmission_logging.templatetags.django_transmission_logging_tags'
+        }
+    }
+    ```
+
+3. Include the transmission_logging URLconf in your project urls.py like this:
 
     ```python
     path(
@@ -25,9 +36,9 @@ logging of request data.
     ),
     ```
 
-3. Run `python manage.py migrate` to create the transmission_logging models.
+4. Run `python manage.py migrate` to create the transmission_logging models.
 
-4. To log all incoming requests, add the transmission logging middleware in your MIDDLEWARE setting like this::
+5. To log all incoming requests, add the transmission logging middleware in your MIDDLEWARE setting like this::
 
     ```python
     MIDDLEWARE = [
@@ -36,7 +47,7 @@ logging of request data.
     ]
     ```
 
-5. To log exceptions in certain views, use the TransmissionLogMixin like this::
+6. To log exceptions in certain views, use the TransmissionLogMixin like this::
 
     ```python
     from transmission_logging.mixins import TransmissionLogMixin
