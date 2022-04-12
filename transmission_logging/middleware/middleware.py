@@ -1,3 +1,4 @@
+from xml.dom.minidom import Attr
 from django.conf import settings
 from django.utils.deprecation import MiddlewareMixin
 from django.urls import resolve
@@ -17,9 +18,13 @@ class TransmissionMiddleware(MiddlewareMixin):
         # If TRANSMISSION_LOGGING_EXCLUDE_REQUEST_LOGGING setting is set to True, do not log transmissions.
         if getattr(settings, "TRANSMISSION_LOGGING_EXCLUDE_REQUEST_LOGGING", False):
             return False
+
         # If transmission_logging_exclude attribute is set to True on the view, do not log transmissions.
-        if getattr(view_func.view_class, "transmission_logging_exclude", False):
-            return False
+        try:
+            if getattr(view_func.view_class, "transmission_logging_exclude", False):
+                return False
+        except AttributeError:
+            pass
         
         # Only log transmissions the apps that have their app_name included in TRANSMISSION_LOGGING_INCLUDE_REQUEST_LOGGING_APPS setting, if that setting is defined.
         try:
